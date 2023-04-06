@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
+import PlanetContext from '../context/PlanetContext';
 
 function Table() {
-  const [planets, setPlanets] = useState([]);
-  const [filter, setFilter] = useState('');
-  useEffect(() => {
-    fetch('https://swapi.dev/api/planets')
-      .then((response) => response.json())
-      .then((data) => setPlanets(data.results));
-  }, []);
-
-  const filterPlanets = planets.filter((planet) => planet.name.toLowerCase()
-    .includes(filter.toLowerCase()));
-
+  const { planetsFiltered } = useContext(PlanetContext);
   return (
     <div>
-      <input
-        type="text"
-        value={ filter }
-        data-testid="name-filter"
-        onChange={ (e) => setFilter(e.target.value) }
-        placeholder="Filter by name..."
-      />
       <table>
         <thead>
           <tr>
@@ -40,7 +24,7 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          {filterPlanets.map((planet) => (
+          {planetsFiltered.map((planet) => (
             <tr key={ planet.url }>
               <td>{planet.name}</td>
               <td>{planet.rotation_period}</td>
