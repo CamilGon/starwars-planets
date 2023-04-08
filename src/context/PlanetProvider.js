@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import PlanetContext from './PlanetContext';
@@ -12,11 +13,8 @@ function PlanetProvider({ children }) {
   const [selectedColunm, setSelectedColunm] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [valueFilter, setValueFilter] = useState(0);
-  const [filterGroup, setFilterGroup] = useState(
-    { selectedColunm: '',
-      comparison: { },
-      valueFilter: 0 },
-  );
+  const [filterGroup, setFilterGroup] = useState();
+  const [allFilter, setAllFilter] = useState([]);
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -38,24 +36,43 @@ function PlanetProvider({ children }) {
   }, [listPlanets, filterByName]);
 
   useEffect(() => {
+    if (filterGroup) {
+      setAllFilter([...allFilter, filterGroup]);
+    }
+
+    // if (filterGroup.selectedColunm) {
+    //   setAllFilter([...allFilter, filterGroup]);
+    //   const newFilterGroup = planetsFiltered
+    //     .filter((planet) => comparisonBy[filterGroup.comparison](
+    //       Number(planet[filterGroup.selectedColunm]),
+    //       Number(filterGroup.valueFilter),
+    //     ));
+    //   setPlanetsFiltered(newFilterGroup);
+    // }
+    setSelectedColunm(column[0]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterGroup]);
+  useEffect(() => {
+    if (allFilter.length === 0) {
+      setPlanetsFiltered(listPlanets);
+      return;
+    }
     const comparisonBy = {
       'maior que': (a, b) => a > b,
       'menor que': (a, b) => a < b,
       'igual a': (a, b) => a === b,
     };
 
-    if (filterGroup.selectedColunm) {
-      console.log(filterGroup.selectedColunm);
-      const newFilterGroup = planetsFiltered
-        .filter((planet) => comparisonBy[filterGroup.comparison](
-          Number(planet[filterGroup.selectedColunm]),
-          Number(filterGroup.valueFilter),
+    let listTwo = listPlanets;
+    allFilter.forEach((filtro) => {
+      listTwo = listTwo
+        .filter((planet) => comparisonBy[filtro.comparison](
+          Number(planet[filtro.selectedColunm]),
+          Number(filtro.valueFilter),
         ));
-      setPlanetsFiltered(newFilterGroup);
-      setSelectedColunm(column[0]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterGroup]);
+    });
+    setPlanetsFiltered(listTwo);
+  }, [allFilter]);
 
   const values = useMemo(() => ({
     listPlanets,
@@ -66,6 +83,8 @@ function PlanetProvider({ children }) {
     valueFilter,
     filterGroup,
     selectedColunm,
+    allFilter,
+    setAllFilter,
     setSelectedColunm,
     setfilterByName,
     setPlanetsFiltered,
@@ -74,6 +93,7 @@ function PlanetProvider({ children }) {
     setValueFilter,
     setFilterGroup,
   }), [
+    allFilter,
     selectedColunm,
     listPlanets,
     filterByName,

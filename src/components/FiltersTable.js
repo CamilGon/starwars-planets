@@ -3,6 +3,7 @@ import PlanetContext from '../context/PlanetContext';
 
 export default function FiltersTable() {
   const {
+    listPlanets,
     filterByName,
     setfilterByName,
     column,
@@ -14,6 +15,8 @@ export default function FiltersTable() {
     setFilterGroup,
     selectedColunm,
     setColumn,
+    setPlanetsFiltered,
+    setAllFilter,
   } = useContext(PlanetContext);
   return (
     <form>
@@ -62,6 +65,16 @@ export default function FiltersTable() {
         data-testid="button-filter"
       >
         Filtrar
+      </button>
+      <button
+        type="button"
+        data-testid="button-remove-filters"
+        onClick={ () => {
+          setPlanetsFiltered(listPlanets);
+          setAllFilter([]);
+        } }
+      >
+        Remover todas filtragens
       </button>
       <hr />
     </form>
