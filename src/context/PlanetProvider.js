@@ -5,29 +5,34 @@ import PlanetContext from './PlanetContext';
 function PlanetProvider({ children }) {
   const [listPlanets, setListPlanets] = useState([]);
   const [filterByName, setfilterByName] = useState('');
-  const [planetsFiltered, setPlanetsFiltered] = useState(listPlanets);
+  const [planetsFiltered, setPlanetsFiltered] = useState([]);
   const [column, setColumn] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [valueFilter, setValueFilter] = useState(0);
-  const [filterGroup, setFilterGroup] = useState({
-    column: '',
-    comparison: '',
-    valueFilter: 0,
-  });
+  const [filterGroup, setFilterGroup] = useState(
+    { column: '',
+      comparison: { },
+      valueFilter: 0 },
+  );
 
   useEffect(() => {
     const fetchPlanets = async () => {
       const response = await fetch('https://swapi.dev/api/planets');
       const data = await response.json();
-      const planets = data.results;
+      const planets = data.results.map((e) => {
+        delete e.residents;
+        return e;
+      });
       setListPlanets(planets);
-      console.log();
-      const newplanetsFiltered = planets
-        .filter((planet) => planet.name.includes(filterByName.toLowerCase()));
-      setPlanetsFiltered(newplanetsFiltered);
     };
     fetchPlanets();
-  }, [filterByName]);
+  }, []);
+
+  useEffect(() => {
+    const newplanetsFiltered = listPlanets
+      .filter((planet) => planet.name.includes(filterByName.toLowerCase()));
+    setPlanetsFiltered(newplanetsFiltered);
+  }, [listPlanets, filterByName]);
 
   useEffect(() => {
     const comparisonBy = {
@@ -37,7 +42,7 @@ function PlanetProvider({ children }) {
     };
 
     if (filterGroup.column) {
-      const newFilterGroup = listPlanets
+      const newFilterGroup = planetsFiltered
         .filter((planet) => comparisonBy[filterGroup.comparison](
           Number(planet[filterGroup.column]),
           Number(filterGroup.valueFilter),
