@@ -8,10 +8,12 @@ export default function FiltersTable() {
     column,
     comparison,
     valueFilter,
-    setColumn,
+    setSelectedColunm,
     setComparison,
     setValueFilter,
     setFilterGroup,
+    selectedColunm,
+    setColumn,
   } = useContext(PlanetContext);
   return (
     <form>
@@ -25,14 +27,12 @@ export default function FiltersTable() {
       />
       <select
         data-testid="column-filter"
-        value={ column }
-        onChange={ (e) => setColumn(e.target.value) }
+        value={ selectedColunm }
+        onChange={ (e) => setSelectedColunm(e.target.value) }
       >
-        <option value="population">population</option>
-        <option value="orbital_period">orbital_period</option>
-        <option value="diameter">diameter</option>
-        <option value="rotation_period">rotation_period</option>
-        <option value="surface_water">surface_water</option>
+        { column.map((option) => (
+          <option value={ option } key={ option }>{option}</option>
+        ))}
       </select>
       <select
         data-testid="comparison-filter"
@@ -53,10 +53,11 @@ export default function FiltersTable() {
         type="button"
         onClick={ () => {
           setFilterGroup({
-            column,
+            selectedColunm,
             comparison,
             valueFilter,
           });
+          setColumn(column.filter((option) => option !== selectedColunm));
         } }
         data-testid="button-filter"
       >

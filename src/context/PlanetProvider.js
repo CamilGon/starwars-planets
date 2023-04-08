@@ -6,11 +6,14 @@ function PlanetProvider({ children }) {
   const [listPlanets, setListPlanets] = useState([]);
   const [filterByName, setfilterByName] = useState('');
   const [planetsFiltered, setPlanetsFiltered] = useState([]);
-  const [column, setColumn] = useState('population');
+  const [column, setColumn] = useState(
+    ['population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'],
+  );
+  const [selectedColunm, setSelectedColunm] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [valueFilter, setValueFilter] = useState(0);
   const [filterGroup, setFilterGroup] = useState(
-    { column: '',
+    { selectedColunm: '',
       comparison: { },
       valueFilter: 0 },
   );
@@ -41,13 +44,15 @@ function PlanetProvider({ children }) {
       'igual a': (a, b) => a === b,
     };
 
-    if (filterGroup.column) {
+    if (filterGroup.selectedColunm) {
+      console.log(filterGroup.selectedColunm);
       const newFilterGroup = planetsFiltered
         .filter((planet) => comparisonBy[filterGroup.comparison](
-          Number(planet[filterGroup.column]),
+          Number(planet[filterGroup.selectedColunm]),
           Number(filterGroup.valueFilter),
         ));
       setPlanetsFiltered(newFilterGroup);
+      setSelectedColunm(column[0]);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterGroup]);
@@ -60,6 +65,8 @@ function PlanetProvider({ children }) {
     comparison,
     valueFilter,
     filterGroup,
+    selectedColunm,
+    setSelectedColunm,
     setfilterByName,
     setPlanetsFiltered,
     setColumn,
@@ -67,6 +74,7 @@ function PlanetProvider({ children }) {
     setValueFilter,
     setFilterGroup,
   }), [
+    selectedColunm,
     listPlanets,
     filterByName,
     planetsFiltered,
