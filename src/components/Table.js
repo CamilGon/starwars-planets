@@ -3,6 +3,7 @@ import PlanetContext from '../context/PlanetContext';
 
 function Table() {
   const { planetsFiltered } = useContext(PlanetContext);
+
   return (
     <div>
       <table>
@@ -26,7 +27,7 @@ function Table() {
         <tbody>
           {planetsFiltered.map((planet) => (
             <tr key={ planet.url }>
-              <td>{planet.name}</td>
+              <td data-testid="planet-name">{planet.name}</td>
               <td>{planet.rotation_period}</td>
               <td>{planet.orbital_period}</td>
               <td>{planet.diameter}</td>

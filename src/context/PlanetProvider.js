@@ -7,7 +7,7 @@ function PlanetProvider({ children }) {
   const [listPlanets, setListPlanets] = useState([]);
   const [filterByName, setfilterByName] = useState('');
   const [planetsFiltered, setPlanetsFiltered] = useState([]);
-  const [column, setColumn] = useState(
+  const [columns, setColumns] = useState(
     ['population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'],
   );
   const [selectedColunm, setSelectedColunm] = useState('population');
@@ -15,6 +15,9 @@ function PlanetProvider({ children }) {
   const [valueFilter, setValueFilter] = useState(0);
   const [filterGroup, setFilterGroup] = useState();
   const [allFilter, setAllFilter] = useState([]);
+  const [orderColumn, setOrderColumn] = useState({ order:
+    { column: 'population', sort: 'ASC' } });
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -39,17 +42,7 @@ function PlanetProvider({ children }) {
     if (filterGroup) {
       setAllFilter([...allFilter, filterGroup]);
     }
-
-    // if (filterGroup.selectedColunm) {
-    //   setAllFilter([...allFilter, filterGroup]);
-    //   const newFilterGroup = planetsFiltered
-    //     .filter((planet) => comparisonBy[filterGroup.comparison](
-    //       Number(planet[filterGroup.selectedColunm]),
-    //       Number(filterGroup.valueFilter),
-    //     ));
-    //   setPlanetsFiltered(newFilterGroup);
-    // }
-    setSelectedColunm(column[0]);
+    setSelectedColunm(columns[0]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterGroup]);
   useEffect(() => {
@@ -78,27 +71,33 @@ function PlanetProvider({ children }) {
     listPlanets,
     filterByName,
     planetsFiltered,
-    column,
+    columns,
     comparison,
     valueFilter,
     filterGroup,
     selectedColunm,
     allFilter,
+    orderColumn,
+    update,
+    setUpdate,
+    setOrderColumn,
     setAllFilter,
     setSelectedColunm,
     setfilterByName,
     setPlanetsFiltered,
-    setColumn,
+    setColumns,
     setComparison,
     setValueFilter,
     setFilterGroup,
   }), [
+    update,
+    orderColumn,
     allFilter,
     selectedColunm,
     listPlanets,
     filterByName,
     planetsFiltered,
-    column,
+    columns,
     comparison,
     valueFilter,
     filterGroup,

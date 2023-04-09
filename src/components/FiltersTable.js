@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PlanetContext from '../context/PlanetContext';
 
 export default function FiltersTable() {
   const {
     listPlanets,
+    planetsFiltered,
     filterByName,
     setfilterByName,
-    column,
+    columns,
     comparison,
     valueFilter,
     setSelectedColunm,
@@ -14,10 +15,23 @@ export default function FiltersTable() {
     setValueFilter,
     setFilterGroup,
     selectedColunm,
-    setColumn,
+    setColumns,
     setPlanetsFiltered,
     setAllFilter,
+    setOrderColumn,
+    orderColumn,
+    update,
+    setUpdate,
   } = useContext(PlanetContext);
+  const columnSort = [
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ];
+  useEffect(() => {}, [update]);
+
   return (
     <form>
       <hr />
@@ -33,10 +47,11 @@ export default function FiltersTable() {
         value={ selectedColunm }
         onChange={ (e) => setSelectedColunm(e.target.value) }
       >
-        { column.map((option) => (
+        { columns.map((option) => (
           <option value={ option } key={ option }>{option}</option>
         ))}
       </select>
+
       <select
         data-testid="comparison-filter"
         value={ comparison }
@@ -60,12 +75,65 @@ export default function FiltersTable() {
             comparison,
             valueFilter,
           });
-          setColumn(column.filter((option) => option !== selectedColunm));
+          setColumns(columns.filter((option) => option !== selectedColunm));
         } }
         data-testid="button-filter"
       >
         Filtrar
       </button>
+      <section>
+        <select
+          name=""
+          id=""
+          data-testid="column-sort"
+          onChange={ (e) => setOrderColumn({ order:
+            { ...orderColumn.order, column: e.target.value } }) }
+        >
+          { columnSort.map((option) => (
+            <option value={ option } key={ option }>{option}</option>
+          ))}
+        </select>
+        <input
+          type="radio"
+          data-testid="column-sort-input-asc"
+          value="ASC"
+          name="sort-radios"
+          onChange={ (e) => setOrderColumn({ order:
+            { ...orderColumn.order, sort: e.target.value } }) }
+        />
+        <input
+          type="radio"
+          data-testid="column-sort-input-desc"
+          value="DESC"
+          name="sort-radios"
+          onChange={ (e) => setOrderColumn({ order:
+            { ...orderColumn.order, sort: e.target.value } }) }
+        />
+        <button
+          type="button"
+          data-testid="column-sort-button"
+          onClick={ () => {
+            const { order: { column, sort } } = orderColumn;
+            const unknown = planetsFiltered
+              .filter((planet) => planet[column] === 'unknown');
+            const notUnknown = planetsFiltered
+              .filter((planet) => planet[column] !== 'unknown');
+
+            if (sort === 'ASC') {
+              const orderPlanets = notUnknown.sort((a, b) => a[column] - b[column]);
+              setPlanetsFiltered([...orderPlanets, ...unknown]);
+              setUpdate((e) => !e);
+              return;
+            }
+            const orderPlanets = notUnknown.sort((a, b) => b[column] - a[column]);
+            setPlanetsFiltered([...orderPlanets, ...unknown]);
+            setUpdate((e) => !e);
+          } }
+        >
+          Ordenar
+
+        </button>
+      </section>
       <button
         type="button"
         data-testid="button-remove-filters"

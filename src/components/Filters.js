@@ -6,6 +6,7 @@ export default function Filters() {
     allFilter,
     setAllFilter,
   } = useContext(PlanetContext);
+
   if (allFilter.length === 0) {
     return (<div />);
   }
@@ -27,6 +28,7 @@ export default function Filters() {
           <p>
             {filtro.valueFilter}
           </p>
+
           <button
             type="button"
             onClick={ () => {
