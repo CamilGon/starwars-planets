@@ -31,6 +31,7 @@ export default function Filters() {
 
           <button
             type="button"
+            data-testid="button-x"
             onClick={ () => {
               setAllFilter(allFilter
                 .filter((e) => e.selectedColunm !== filtro.selectedColunm));
